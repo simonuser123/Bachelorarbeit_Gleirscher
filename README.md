@@ -285,7 +285,7 @@ eps [µε] = 4 · (c − code_zero) / (K · GAIN · FS) · 1e6
 | `c`         | aktueller ADC-Rohwert                               |
 | `code_zero` | tarierter Nullpunkt (Mittel der ersten 2 s)         |
 | `4`         | Brückenfaktor der **Viertelbrücke**                 |
-| `K`         | Gauge-Faktor des DMS, **2.11** (aus Datenblatt)     |
+| `K`         | Gauge-Faktor des DMS, **2.06** (aus Datenblatt)     |
 | `GAIN`      | PGA-Verstärkung des ADS1220, **128**                |
 | `FS`        | Vollausschlag = 2²³ = **8 388 608**                 |
 
