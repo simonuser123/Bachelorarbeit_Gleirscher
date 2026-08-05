@@ -39,15 +39,38 @@ with open(infile, encoding="utf-8", errors="ignore") as f:
 if not t:
     sys.exit(f"Keine Messdaten in '{infile}' gefunden.")
 
+# Optionaler Zeitbereich: python plot_dms.py logfile.log 2 3
+t_start = float(sys.argv[2]) if len(sys.argv) > 2 else None
+t_end = float(sys.argv[3]) if len(sys.argv) > 3 else None
+
+if t_start is not None or t_end is not None:
+    filtered = [(ti, ei) for ti, ei in zip(t, eps)
+                if (t_start is None or ti >= t_start) and (t_end is None or ti <= t_end)]
+    if not filtered:
+        sys.exit(f"Keine Datenpunkte im Bereich [{t_start}, {t_end}] Sekunden gefunden.")
+    t, eps = zip(*filtered)
+    notes = [(sec, ue, note) for sec, ue, note in notes
+              if (t_start is None or sec >= t_start) and (t_end is None or sec <= t_end)]
+    
 plt.figure(figsize=(8, 4.5))
 plt.plot(t, eps, lw=0.9, color="#1f4e79", label="Dehnung")
 
 plt.xlabel("Zeit [s]")
 plt.ylabel("Dehnung [µε]")
-plt.title("DMS-Messung – Gewichtsbelastung (Viertelbrücke)")
+
+title = "DMS-Messung"
+if t_start is not None or t_end is not None:
+    title += f" [{t_start or 0:.1f}–{t_end or t[-1]:.1f} s]"
+plt.title(title)
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
+suffix = ""
+if t_start is not None or t_end is not None:
+    suffix = f"_{t_start or 0:.1f}-{t_end or t[-1]:.1f}s"
 
-plt.savefig("dms_plot.png", dpi=300)
-plt.savefig("dms_plot.pdf")
-print(f"{len(t)} Punkte geplottet -> dms_plot.png, dms_plot.pdf")
+png_name = f"dms_plot{suffix}.png"
+pdf_name = f"dms_plot{suffix}.pdf"
+
+plt.savefig(png_name, dpi=300)
+plt.savefig(pdf_name)
+print(f"{len(t)} Punkte geplottet -> {png_name}, {pdf_name}")

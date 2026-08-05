@@ -20,11 +20,11 @@
 #include "esp_timer.h"
 
 // ===== ANPASSEN =====
-#define WIFI_SSID  "A1_43E4C4"
-#define WIFI_PASS  "6U4Z63E22K"
-#define PC_HOST    "192.168.0.6"     // lokale IP deines PCs 192.168.0.8
+#define WIFI_SSID  "iPhone von Simon"
+#define WIFI_PASS  "12345678"
+#define PC_HOST    "172.20.10.2"    // lokale IP deines PCs 192.168.0.8
 #define PC_PORT    3333
-#define ADC_SPS    330                 // muss zu CFG[1] passen (siehe unten)
+#define ADC_SPS    1000                 // muss zu CFG[1] passen (siehe unten)
 // ====================
 
 // ---------- Pins ----------
@@ -47,7 +47,7 @@
 //          (bei Turbo zusaetzlich ADC_SPS oben auf 2000 setzen)
 // CONFIG2: Ref = AVDD, 0xC0 interner 50/60-Hz-Filter ausgeschaltet, 0xD0 50/60-Hz-Filter eingeschaltet(geht nur bei 20 SPS)
 // CONFIG3: 0x00
-const uint8_t CFG[4] = { 0x0E, 0x84, 0xC0, 0x00 };
+const uint8_t CFG[4] = { 0x0E, 0xC4, 0xC0, 0x00 };
 
 // ---------- Datenstrukturen ----------
 struct Sample { uint32_t seq; uint64_t t_us; int32_t code; };
@@ -71,7 +71,7 @@ volatile bool  g_wifiOk = false;
 SPISettings spiCfg(4000000, MSBFIRST, SPI_MODE1);
 
 static const uint16_t BATCH_MAX = 200;   // Sicherheitsgrenze (Paket < MTU)
-static const uint32_t BATCH_MS  = 20;    // max. Sammelfenster -> begrenzt Latenz
+static const uint32_t BATCH_MS  = 100;    // max. Sammelfenster -> begrenzt Latenz
 
 // ================= ADC =================
 void adcCommand(uint8_t cmd) {
