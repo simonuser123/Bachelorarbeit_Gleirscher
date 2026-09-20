@@ -20,11 +20,11 @@
 #include "esp_timer.h"
 
 // ===== ANPASSEN =====
-#define WIFI_SSID  "iPhone von Simon"
-#define WIFI_PASS  "12345678"
-#define PC_HOST    "172.20.10.2"    // lokale IP deines PCs 192.168.0.8
+#define WIFI_SSID  "XXXXXXXXXX"
+#define WIFI_PASS  "XXXXXXXXXX"
+#define PC_HOST    "192.168.0.3"    // lokale IP deines PCs 
 #define PC_PORT    3333
-#define ADC_SPS    1000                 // muss zu CFG[1] passen (siehe unten)
+#define ADC_SPS    1000                 // muss zu CFG[1] passen (siehe Zeile 50)
 // ====================
 
 // ---------- Pins ----------
@@ -139,6 +139,13 @@ void netTask(void *) {
     }
     g_wifiOk = true;
 
+  if (!g_wifiOk) {
+      // Daten der Verbindungsphase verwerfen
+      xQueueReset(sampleQ);
+      dropped = 0;
+      g_wifiOk = true;
+    }
+    
     if (xQueueReceive(sampleQ, &s, pdMS_TO_TICKS(100)) != pdTRUE) continue;
 
     PktHeader *h = (PktHeader *)pkt;

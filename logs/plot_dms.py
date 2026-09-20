@@ -14,6 +14,11 @@ Benoetigt:  pip install matplotlib
 import sys
 import matplotlib.pyplot as plt
 
+# --- Hilfsfunktionen für das deutsche Zahlenformat ---
+def german_ticks(x, pos):
+    """Formatierer für die Matplotlib-Achsen (tauscht Punkt gegen Komma)."""
+    return f"{x:g}".replace('.', ',')
+
 infile = sys.argv[1] if len(sys.argv) > 1 else "dms_log.csv"
 
 t, eps, notes = [], [], []
@@ -55,8 +60,10 @@ if t_start is not None or t_end is not None:
 plt.figure(figsize=(8, 4.5))
 plt.plot(t, eps, lw=0.9, color="#1f4e79", label="Dehnung")
 
-plt.xlabel("Zeit [s]")
-plt.ylabel("Dehnung [µε]")
+plt.xlabel("Zeit in s")
+plt.ylabel("Dehnung in µm/m")
+plt.gca().xaxis.set_major_formatter(german_ticks)
+plt.gca().yaxis.set_major_formatter(german_ticks)
 
 title = "DMS-Messung"
 if t_start is not None or t_end is not None:
