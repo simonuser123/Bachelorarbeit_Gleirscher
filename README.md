@@ -111,7 +111,7 @@ Erfassung nicht durch den WLAN-Stack gestört wird:
 - **`netTask` (Core 0, Priorität 2):** Verwaltet die WLAN-Verbindung
   (Auto-Reconnect, kein Modem-Sleep), entnimmt Samples aus der Queue und bündelt
   sie zu einem Paket. Ein Paket wird verschickt, sobald **200 Samples**
-  (`BATCH_MAX`) gesammelt sind **oder 20 ms** (`BATCH_MS`) vergangen sind — je
+  (`BATCH_MAX`) gesammelt sind **oder 100 ms** (`BATCH_MS`) vergangen sind — je
   nachdem, was zuerst eintritt. Das begrenzt gleichzeitig Paketgröße (< MTU) und
   Latenz.
 - **`loop()` (Status-LED):** Steuert das Blinkmuster der Onboard-LED je nach
@@ -267,8 +267,8 @@ t_ms,code,microstrain
 6.061,-115697,0.57
 ```
 
-Der Zeitabstand von ~3,03 ms zwischen den Zeilen entspricht der Standard-Rate
-von **330 SPS** (1/330 s ≈ 3,03 ms).
+Der Zeitabstand von ~1 ms zwischen den Zeilen entspricht der Standard-Rate
+von **1000 SPS** (1/1000 s ≈ 1 ms).
 
 ---
 
@@ -306,9 +306,9 @@ mitgeschickt und dient dem PC zur Zeitrekonstruktion.
 | 45    | `0x24`   |                     |
 | 90    | `0x44`   |                     |
 | 175   | `0x64`   |                     |
-| **330** | **`0x84`** | **aktuelle Einstellung** |
+| 330   | `0x84`   |                     |
 | 600   | `0xA4`   |                     |
-| 1000  | `0xC4`   |                     |
+| **1000**  | **`0xC4`**   |**aktuelle Einstellung** |
 | 2000  | `0xD4`   | Turbo — zusätzlich `ADC_SPS = 2000` setzen |
 
 Weitere Register (`CFG` in `main.cpp`):
@@ -351,8 +351,7 @@ Weitere Register (`CFG` in `main.cpp`):
   erneut angefordert. Für lückenlose Aufzeichnung muss die Funkstrecke stabil
   sein.
 - **Zeitstempel interpoliert:** Nur das erste Sample je Paket trägt einen echten
-  Zeitstempel; die übrigen werden aus der nominalen SPS berechnet. Kleiner
-  Taktdrift des ADC ist damit nicht erfasst.
+  Zeitstempel; der Server schätzt die reale Rate zur Laufzeit 
 - **`ADC_SPS` und `CFG[1]` sind manuell zu synchronisieren** — es gibt keine
   automatische Prüfung.
 - **Parameter fest im Code:** WLAN-Zugang, Ziel-IP und DMS-Kalibrierung sind
