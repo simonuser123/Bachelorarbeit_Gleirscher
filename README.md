@@ -148,6 +148,40 @@ Liest eine CSV (Spalten `t_ms,code,microstrain`, optionale `note`-Spalte),
 Ergebnis: **`dms_plot.png`** (300 dpi) und **`dms_plot.pdf`** (vektoriell, für
 den Bericht).
 
+### `umlaufbiegung_analysis.py` — Auswertung der Umlaufbiegung
+
+Wertet eine Messung **unter Last** aus. Beim Start öffnet sich ein Dateidialog
+zur Auswahl der CSV. Nach einer Voransicht des Gesamtverlaufs werden Start- und
+Endzeit eines stabilen Fensters abgefragt; darin wird ein Sinus angepasst
+(Startfrequenz aus der FFT, anschließend `curve_fit`).
+
+Ausgabe in der Konsole: Mitteldehnung, Dehnungsamplitude, Spitze-Spitze,
+Frequenz, Drehzahl in U/min und Restrauschen (RMSE).
+
+Zusätzlich drei Vektorgrafiken neben der CSV-Datei:
+
+- **`<name>_01_sinusfit.pdf`** — Messsignal mit gefittetem Sinus
+- **`<name>_02_spektrum.pdf`** — FFT-Spektrum (logarithmisch) mit markierter Hauptfrequenz
+- **`<name>_03_residuen.pdf`** — Abweichung vom idealen Sinus mit ±3σ-Grenzen
+
+### `baseline_analysis.py` — Rauschen und Drift
+
+Wertet eine Referenzmessung **ohne Last bei stehender Welle** aus. Bedienung wie
+oben: Dateidialog, Voransicht, Eingabe eines ruhigen Zeitfensters. Die Drift wird
+per linearer Regression bestimmt und für die Rauschanalyse herausgerechnet.
+
+Ausgabe in der Konsole: analysiertes Fenster, Anzahl Datenpunkte, mittlerer
+Offset, Drift-Rate, Peak-to-Peak-Rauschen, RMS-Rauschen (1 σ) und Anzahl der
+Spikes über 3 σ.
+
+Drei Vektorgrafiken neben der CSV-Datei:
+
+- **`<name>_01_drift.pdf`** — Signalausschnitt mit eingezeichneter Driftgerade
+- **`<name>_02_rauschen.pdf`** — detrendetes Rauschen
+- **`<name>_03_histogramm.pdf`** — Verteilung der Rauschwerte
+
+> Beide Skripte benötigen `pandas`, `numpy`, `scipy`, `matplotlib` und `tkinter`
+> (in der Standard-Python-Installation für Windows enthalten).
 ---
 
 ## Quick Start
@@ -166,6 +200,10 @@ python pc_udp_server.py
 
 # 4) Grafik erzeugen
 python plot_dms.py dms_rot_20260706_162503.csv
+
+# 5) Detailauswertung (Dateidialog, Zeitfenster im Terminal eingeben)
+python umlaufbiegung_analysis.py    # Messung unter Last
+python baseline_analysis.py         # Referenzmessung ohne Last
 ```
 
 ---
